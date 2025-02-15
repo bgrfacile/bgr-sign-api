@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bgr_sign_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+  flyway:
+    # Les scripts seront recherchés dans le classpath (src/main/resources/db/migration)
+    locations: classpath:db/migration
+  application:
+    name: bgr-sign-api
+
+logging:
+  level:
+    org.flywaydb: info
