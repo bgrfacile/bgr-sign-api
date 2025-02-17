@@ -7,11 +7,16 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
+    #  ddl-auto: none
+    # (Optionnel) Affiche les requêtes SQL dans la console :
+    # show-sql: true
+    # format-sql: true
 
   flyway:
-    # Les scripts seront recherchés dans le classpath (src/main/resources/db/migration)
     locations: classpath:db/migration
+    enabled: false
+
   application:
     name: bgr-sign-api
 
@@ -19,6 +24,11 @@ logging:
   level:
     org.flywaydb: info
 
-jwt:
+app:
+  jwtSecret: "X7Ad9qh37bS1zP1zP1T09yZ3k8KYLS5fSE0tPNQ1It5Fz18JPycdkZxzOqPQZ1zH"
+  jwtExpirationInMs: 604800000
 
-  # 7 jours en millisecondes
+server:
+  port: 8081
+
+debug: true

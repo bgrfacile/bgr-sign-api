@@ -1,7 +1,8 @@
 package com.bgrfacile.bgrsignapi.config;
 
 import com.bgrfacile.bgrsignapi.security.JwtAuthenticationFilter;
-import com.bgrfacile.bgrsignapi.service.CustomUserDetailsService;
+import com.bgrfacile.bgrsignapi.utils.CustomAccessDeniedHandler;
+import com.bgrfacile.bgrsignapi.utils.CustomAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -25,8 +28,12 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableMethodSecurity
 public class SecurityConfig {
 
+
     @Autowired
-    private CustomUserDetailsService customUserDetailsService;
+    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+    @Autowired
+    private CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
@@ -38,9 +45,10 @@ public class SecurityConfig {
         http
                 .cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
-                .exceptionHandling(exceptionHandling -> {
-                    // Vous pouvez définir ici vos gestionnaires d'exception personnalisés
-                })
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
+                        .accessDeniedHandler(customAccessDeniedHandler)
+                )
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
@@ -70,5 +78,10 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

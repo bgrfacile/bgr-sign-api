@@ -20,7 +20,7 @@ public class User {
     @Column(unique = true)
     private String email;
 
-    @Column(name = "password_hash")
+    @Column(name = "password")
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY)

@@ -33,11 +33,11 @@ VALUES (1, 1),
        (4, 3);
 
 -- 4. Insérer des utilisateurs
-INSERT INTO users (email, password_hash)
-VALUES ('admin@example.com', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'),    -- password
-       ('teacher1@example.com', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'), -- password
-       ('student1@example.com', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'), -- password
-       ('parent1@example.com', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8');
+INSERT INTO users (email, password)
+VALUES ('admin@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2'),    -- password
+       ('teacher1@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2'), -- password
+       ('student1@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2'), -- password
+       ('parent1@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2');
 -- password
 
 -- 5. Associer les utilisateurs à leurs rôles
