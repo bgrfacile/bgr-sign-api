@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -20,9 +21,8 @@ import java.util.List;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-
 @Configuration
-@EnableMethodSecurity  // Pour utiliser les annotations de sécurité sur les méthodes (@PreAuthorize, etc.)
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Autowired
@@ -36,14 +36,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(withDefaults())  // Remplacez .cors().and() par cors(withDefaults())
-                .csrf().disable()
-                .exceptionHandling() // Gestion des exceptions personnalisée
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+                .cors(withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(exceptionHandling -> {
+                    // Vous pouvez définir ici vos gestionnaires d'exception personnalisés
+                })
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .authorizeHttpRequests(authorize ->
-                        authorize.antMatchers("/api/auth/**").permitAll()
+                        authorize
+                                .requestMatchers("/api/auth/**").permitAll()  // Remplacez antMatchers par requestMatchers
                                 .anyRequest().authenticated()
                 );
 
@@ -59,7 +62,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*")); // Autorise toutes les origines (à adapter en prod)
+        configuration.setAllowedOrigins(List.of("*")); // Autorise toutes les origines (à adapter pour la prod)
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
@@ -68,5 +71,4 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
 }

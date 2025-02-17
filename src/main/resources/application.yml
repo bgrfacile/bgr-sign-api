@@ -18,3 +18,7 @@ spring:
 logging:
   level:
     org.flywaydb: info
+
+jwt:
+
+  # 7 jours en millisecondes
