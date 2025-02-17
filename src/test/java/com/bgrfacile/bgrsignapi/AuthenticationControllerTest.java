@@ -2,9 +2,11 @@ package com.bgrfacile.bgrsignapi;
 
 import com.bgrfacile.bgrsignapi.dto.JwtAuthenticationResponse;
 import com.bgrfacile.bgrsignapi.dto.LoginRequest;
+import com.bgrfacile.bgrsignapi.dto.RegisterRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +25,51 @@ public class AuthenticationControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    // Teste l’endpoint de connexion et vérifie que le token JWT est retourné
+    @Test
+    public void testFullWorkflow() throws Exception {
+        // Génère un email unique pour éviter le conflit "email déjà utilisé"
+        String uniqueEmail = "newuser_" + System.currentTimeMillis() + "@example.com";
+
+        // 1. Inscription
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setEmail(uniqueEmail);
+        registerRequest.setPassword("password");
+        registerRequest.setRole("student");  // Le rôle doit correspondre à une valeur définie dans ERole
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(registerRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true));
+
+        // 2. Connexion
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setEmail(uniqueEmail);
+        loginRequest.setPassword("password");
+
+        String loginResponse = mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accessToken").exists())
+                .andReturn().getResponse().getContentAsString();
+
+        JwtAuthenticationResponse authResponse = objectMapper.readValue(loginResponse, JwtAuthenticationResponse.class);
+        String token = authResponse.getAccessToken();
+
+        // 3. Accès à un endpoint protégé
+        mockMvc.perform(get("/api/secure/hello")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Hello, secured world!"));
+    }
+
+    // Vous pouvez garder les autres tests indépendants si vous le souhaitez
     @Test
     public void testLogin_Success() throws Exception {
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail("testuser@example.com");      // doit exister dans vos données de test
-        loginRequest.setPassword("testpassword");
+        loginRequest.setEmail("teststudent@example.com");  // Doit exister dans vos données de test
+        loginRequest.setPassword("password");
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -38,20 +79,18 @@ public class AuthenticationControllerTest {
                 .andExpect(jsonPath("$.tokenType").value("Bearer"));
     }
 
-    // Vérifie qu’un endpoint protégé renvoie un 401 Unauthorized lorsqu’aucun token n’est fourni
     @Test
     public void testSecuredEndpoint_Unauthorized() throws Exception {
         mockMvc.perform(get("/api/secure/hello"))
                 .andExpect(status().isUnauthorized());
     }
 
-    // Récupère un token via l’endpoint de connexion puis appelle un endpoint protégé avec ce token
     @Test
     public void testSecuredEndpoint_WithValidToken() throws Exception {
-        // Obtenir le token via l’endpoint /api/auth/login
+        // Obtenir le token via l'endpoint /api/auth/login
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setEmail("testuser@example.com");
-        loginRequest.setPassword("testpassword");
+        loginRequest.setEmail("teststudent@example.com");
+        loginRequest.setPassword("password");
 
         String loginResponse = mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -62,10 +101,10 @@ public class AuthenticationControllerTest {
         JwtAuthenticationResponse authResponse = objectMapper.readValue(loginResponse, JwtAuthenticationResponse.class);
         String token = authResponse.getAccessToken();
 
-        // Appeler l’endpoint sécurisé en fournissant le token dans le header Authorization
+        // Appeler l'endpoint sécurisé avec le token
         mockMvc.perform(get("/api/secure/hello")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Hello, secured world!")); // Par exemple, si votre contrôleur renvoie ce message
+                .andExpect(content().string("Hello, secured world!"));
     }
 }
