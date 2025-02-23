@@ -80,4 +80,9 @@ public class JwtTokenProvider {
         }
         return false;
     }
+
+    public int getExpiryDuration() {
+        return jwtExpirationInMs;
+    }
+
 }

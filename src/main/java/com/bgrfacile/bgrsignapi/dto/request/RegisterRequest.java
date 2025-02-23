@@ -1,4 +1,4 @@
-package com.bgrfacile.bgrsignapi.dto;
+package com.bgrfacile.bgrsignapi.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

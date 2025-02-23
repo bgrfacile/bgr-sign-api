@@ -54,7 +54,8 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(authorize ->
                         authorize
-                                .requestMatchers("/api/auth/**").permitAll()  // Remplacez antMatchers par requestMatchers
+                                .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()  // Remplacez antMatchers par requestMatchers
+//                                .requestMatchers("/api/auth/**").permitAll()  // Remplacez antMatchers par requestMatchers
                                 .anyRequest().authenticated()
                 );
 
@@ -70,7 +71,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*")); // Autorise toutes les origines (à adapter pour la prod)
+//        configuration.setAllowedOrigins(List.of("*")); // Autorise toutes les origines (à adapter pour la prod)
+        configuration.setAllowedOriginPatterns(List.of("*"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

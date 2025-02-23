@@ -1,4 +1,4 @@
-package com.bgrfacile.bgrsignapi.dto;
+package com.bgrfacile.bgrsignapi.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

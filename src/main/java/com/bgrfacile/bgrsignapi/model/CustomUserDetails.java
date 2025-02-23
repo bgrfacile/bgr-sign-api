@@ -3,20 +3,27 @@ package com.bgrfacile.bgrsignapi.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Data
+@Getter
+@Setter
+@ToString(exclude = "password")
 public class CustomUserDetails implements UserDetails {
 
-    @Getter
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private Long id;
-    private String username;
+    private String username; // ici, le username correspond à l'email de l'utilisateur
 
     @JsonIgnore
     private String password;

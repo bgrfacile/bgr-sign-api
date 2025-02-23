@@ -1,28 +1,34 @@
 package com.bgrfacile.bgrsignapi.controller;
 
-import com.bgrfacile.bgrsignapi.dto.ApiResponse;
-import com.bgrfacile.bgrsignapi.dto.JwtAuthenticationResponse;
-import com.bgrfacile.bgrsignapi.dto.LoginRequest;
-import com.bgrfacile.bgrsignapi.dto.RegisterRequest;
+import com.bgrfacile.bgrsignapi.dto.UserProfileDTO;
+import com.bgrfacile.bgrsignapi.dto.request.LoginRequest;
+import com.bgrfacile.bgrsignapi.dto.request.RegisterRequest;
+import com.bgrfacile.bgrsignapi.dto.response.ApiResponse;
+import com.bgrfacile.bgrsignapi.dto.response.JwtAuthenticationResponse;
+import com.bgrfacile.bgrsignapi.dto.response.UserSummary;
+import com.bgrfacile.bgrsignapi.model.CustomUserDetails;
 import com.bgrfacile.bgrsignapi.model.Role;
 import com.bgrfacile.bgrsignapi.model.User;
 import com.bgrfacile.bgrsignapi.repository.RoleRepository;
 import com.bgrfacile.bgrsignapi.repository.UserRepository;
 import com.bgrfacile.bgrsignapi.security.JwtTokenProvider;
+import com.bgrfacile.bgrsignapi.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -43,18 +49,44 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private UserService userService;
+
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        // Authentifier l'utilisateur
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getEmail(),
                         loginRequest.getPassword()
                 )
         );
+
+        // Placer l'authentification dans le contexte de sécurité
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Générer le token JWT
         String jwt = tokenProvider.generateToken(authentication);
-        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
+
+        // Récupérer la durée d'expiration du token (en secondes par exemple)
+        long expiresIn = tokenProvider.getExpiryDuration(); // Méthode à implémenter dans JwtTokenProvider
+
+        // Retourne la réponse incluant le token et les infos de l'utilisateur
+        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, expiresIn));
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal CustomUserDetails currentUser) {
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ApiResponse(false, "Utilisateur non authentifié"));
+        }
+        User user = userRepository.findById(currentUser.getId())
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+        UserProfileDTO userProfileDTO = userService.getUserProfile(user);
+        return ResponseEntity.ok(userProfileDTO);
+    }
+
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {

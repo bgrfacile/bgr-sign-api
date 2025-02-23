@@ -1,8 +1,8 @@
 package com.bgrfacile.bgrsignapi;
 
-import com.bgrfacile.bgrsignapi.dto.JwtAuthenticationResponse;
-import com.bgrfacile.bgrsignapi.dto.LoginRequest;
-import com.bgrfacile.bgrsignapi.dto.RegisterRequest;
+import com.bgrfacile.bgrsignapi.dto.response.JwtAuthenticationResponse;
+import com.bgrfacile.bgrsignapi.dto.request.LoginRequest;
+import com.bgrfacile.bgrsignapi.dto.request.RegisterRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
