@@ -44,12 +44,22 @@ jobs:
       - name: Generate .env file
         run: echo "DOMAINE_NAME=${{ secrets.DOMAINE_NAME }}" > .env
 
-      # 7. Synchroniser le fichier docker-compose-prod.yml vers le VPS via rsync
+      # 7. Générer le fichier prod.properties avec les bonnes valeurs
+      - name: Generate prod.properties file
+        run: |
+          mkdir -p configuration
+          echo "DB_HOST=postgres" >> configuration/prod.properties
+          echo "DB_USER=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> configuration/prod.properties
+          echo "DB_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> configuration/prod.properties
+          echo "JWT_SECRET=$(openssl rand -base64 32)" >> configuration/prod.properties
+
+      # 8. Synchroniser les fichiers de configuration et docker-compose vers le VPS
       - name: Sync configuration files to VPS
         run: |
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" docker-compose-prod.yml .env ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:/srv/www/bgr-sign-api/
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} "mkdir -p /srv/www/bgr-sign-api/configuration"
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" docker-compose-prod.yml .env configuration/ ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:/srv/www/bgr-sign-api/
 
-      # 8. Déployer sur le VPS via SSH en utilisant docker-compose
+      # 9. Déployer sur le VPS via SSH en utilisant docker-compose
       - name: Deploy on VPS via SSH
         uses: appleboy/ssh-action@v0.1.6
         with:
