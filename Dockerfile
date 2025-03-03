@@ -8,7 +8,7 @@ RUN mvn dependency:go-offline -B
 
 # Copier le reste du code source
 COPY src ./src
-COPY configuration ./configuration
+#COPY configuration ./configuration
 
 # Compiler l'application et créer le jar (sans tests)
 RUN mvn clean package -DskipTests
