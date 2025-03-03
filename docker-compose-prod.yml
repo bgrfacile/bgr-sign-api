@@ -7,9 +7,9 @@ services:
       - "8080:8080"
     environment:
       SPRING_PROFILES_ACTIVE: prod
-#      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bgr_sign_db
-#      SPRING_DATASOURCE_USERNAME: postgres
-#      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bgr_sign_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
     volumes:
       - ./configuration:/app/configuration
     restart: always
