@@ -57,7 +57,7 @@ jobs:
       - name: Sync configuration files to VPS
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }} "mkdir -p /srv/www/bgr-sign-api/configuration"
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" docker-compose-prod.yml .env configuration/ ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:/srv/www/bgr-sign-api/
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" docker-compose-prod.yml .env ./configuration/ ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:/srv/www/bgr-sign-api/
 
       # 9. Déployer sur le VPS via SSH en utilisant docker-compose
       - name: Deploy on VPS via SSH
