@@ -10,8 +10,8 @@ services:
 #      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/bgr_sign_db
 #      SPRING_DATASOURCE_USERNAME: postgres
 #      SPRING_DATASOURCE_PASSWORD: postgres
-#    volumes:
-#      - ./configuration:/app/configuration
+    volumes:
+      - ./configuration:/app/configuration
     restart: always
     networks:
       #      - springboot-network
