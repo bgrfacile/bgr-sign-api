@@ -1,7 +1,7 @@
 services:
   bgr-sign-api:
-    build: .
-#    image: bgr-sign-api:latest
+    #    build: .
+    image: registry.bgrfacile.com/bgr-sign-api:latest
     container_name: bgr-sign-api
     ports:
       - "8080:8080"
@@ -14,9 +14,19 @@ services:
       - ./configuration:/app/configuration
     restart: always
     networks:
-      - springboot-network
+      #      - springboot-network
+      - traefik-network
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.bgr-sign-api.rule=Host(`${DOMAINE_NAME:-api.bgrsign.bgrfacile.com}`)
+      - traefik.http.routers.bgr-sign-api.entrypoints=websecure
+      - traefik.http.routers.bgr-sign-api.tls.certresolver=le
+      - traefik.http.services.bgr-sign-api.loadbalancer.server.port=8080
 
 networks:
-  springboot-network:
+  traefik-network:
     external: true
-    name: springboot-network
+    name: traefik-network
+#  springboot-network:
+#    external: true
+#    name: springboot-network

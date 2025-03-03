@@ -41,13 +41,13 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       # 6. (Optionnel) Générer le fichier .env si nécessaire
-      # - name: Generate .env file
-      #   run: echo "DOMAINE_NAME=${{ secrets.DOMAINE_NAME }}" > .env
+      - name: Generate .env file
+        run: echo "DOMAINE_NAME=${{ secrets.DOMAINE_NAME }}" > .env
 
       # 7. Synchroniser le fichier docker-compose-prod.yml vers le VPS via rsync
       - name: Sync configuration files to VPS
         run: |
-          rsync -avz -e "ssh -o StrictHostKeyChecking=no" docker-compose-prod.yml ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:/srv/www/bgr-sign-api/
+          rsync -avz -e "ssh -o StrictHostKeyChecking=no" docker-compose-prod.yml .env ${{ secrets.VPS_USERNAME }}@${{ secrets.VPS_HOST }}:/srv/www/bgr-sign-api/
 
       # 8. Déployer sur le VPS via SSH en utilisant docker-compose
       - name: Deploy on VPS via SSH
