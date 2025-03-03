@@ -47,11 +47,16 @@ jobs:
       # 7. Générer le fichier prod.properties avec les bonnes valeurs
       - name: Generate prod.properties file
         run: |
-          mkdir -p configuration
-          echo "DB_HOST=postgres" >> configuration/prod.properties
-          echo "DB_USER=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> configuration/prod.properties
-          echo "DB_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> configuration/prod.properties
-          echo "JWT_SECRET=$(openssl rand -base64 32)" >> configuration/prod.properties
+          echo "DB_HOST=postgres" > prod.properties
+          echo "DB_USER=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> prod.properties
+          echo "DB_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> prod.properties
+          echo "JWT_SECRET=$(openssl rand -base64 64)" >> prod.properties
+
+      - name: Create configuration directory
+        run: mkdir -p configuration
+
+      - name: Move prod.properties to configuration directory
+        run: mv prod.properties configuration/
 
       # 8. Synchroniser les fichiers de configuration et docker-compose vers le VPS
       - name: Sync configuration files to VPS

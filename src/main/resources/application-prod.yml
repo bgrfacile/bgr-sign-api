@@ -34,7 +34,7 @@ logging:
 
 app:
 #  jwtSecret: ${JWT_SECRET}
-  jwtSecret: eLdw8vR8Iu8YkQor3rR4g1s1qUaNoJJemFc5kqNLKYs=
+  jwtSecret: Wawx/7n/SDZovyoq6ozZeaqcL1hEm6o78w03uGoD68rcd8BJZ097Vi4PUmzHFFuOrMGNFuSfXZoioeZRQZSURQ==
   jwtExpirationInMs: 604800000
 
 debug: false
