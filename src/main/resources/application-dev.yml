@@ -6,7 +6,7 @@ spring:
   config:
     activate:
       on-profile: dev
-    import: "file:configuration/dev.properties"
+    import: "optional:file:configuration/dev.properties"
   datasource:
     url: jdbc:postgresql://localhost:5432/bgr_sign_db
     username: postgres
