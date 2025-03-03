@@ -8,7 +8,7 @@ RUN mvn dependency:go-offline -B
 
 # Copier le reste du code source
 COPY src ./src
-COPY configuration ./configuration
+#COPY configuration ./configuration
 
 # Compiler l'application et créer le jar (sans tests)
 RUN mvn clean package -DskipTests
@@ -24,7 +24,7 @@ RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
 COPY --from=builder /build/target/*.jar app.jar
 
 # Copier le dossier de configuration
-COPY --from=builder /build/configuration ./configuration
+#COPY --from=builder /build/configuration ./configuration
 
 # Définir une variable d'environnement pour le profil de production (si nécessaire)
 ENV SPRING_PROFILES_ACTIVE=prod
