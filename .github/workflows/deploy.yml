@@ -1,9 +1,10 @@
 name: Deploy Spring Boot to VPS
 
 on:
-  push:
+  pull_request:
     branches:
       - main
+    types: [opened,synchronize,reopened,ready_for_review]
 
 jobs:
   build-and-deploy:
