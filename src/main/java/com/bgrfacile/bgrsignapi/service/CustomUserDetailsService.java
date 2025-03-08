@@ -1,6 +1,6 @@
 package com.bgrfacile.bgrsignapi.service;
 
-import com.bgrfacile.bgrsignapi.model.CustomUserDetails;
+import com.bgrfacile.bgrsignapi.security.CustomUserDetails;
 import com.bgrfacile.bgrsignapi.model.User;
 import com.bgrfacile.bgrsignapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
