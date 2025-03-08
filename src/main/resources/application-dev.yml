@@ -27,8 +27,8 @@ spring:
 
 logging:
   level:
-    root: debug
-    org.flywaydb: info
+    root: warn
+    org.flywaydb: warn
 
 app:
   jwtSecret: ${JWT_SECRET:L6+d9T3viXB/RHXjBFz6W/QsHmawRIcEhLbpueT3Ih+sY5jHuzlYKILljLAWB6KPmPWiohLXM1Lcy/LYMFwhgw==}
