@@ -1,6 +1,9 @@
 services:
   postgres:
     image: postgres:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: postgres
     restart: always
     environment:

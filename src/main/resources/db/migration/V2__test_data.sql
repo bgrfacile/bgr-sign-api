@@ -33,11 +33,11 @@ VALUES (1, 1),
        (4, 3);
 
 -- 4. Insérer des utilisateurs
-INSERT INTO users (email, password)
-VALUES ('admin@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2'),    -- password
-       ('teacher1@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2'), -- password
-       ('student1@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2'), -- password
-       ('parent1@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2');
+INSERT INTO users (email, password, enabled)
+VALUES ('admin@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2', true),    -- password
+       ('teacher1@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2',true), -- password
+       ('student1@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2',true), -- password
+       ('parent1@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2',true);
 -- password
 
 -- 5. Associer les utilisateurs à leurs rôles
