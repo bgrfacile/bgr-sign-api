@@ -5,13 +5,15 @@ import com.bgrfacile.bgrsignapi.dto.request.LoginRequest;
 import com.bgrfacile.bgrsignapi.dto.request.RegisterRequest;
 import com.bgrfacile.bgrsignapi.dto.response.ApiResponse;
 import com.bgrfacile.bgrsignapi.dto.response.JwtAuthenticationResponse;
-import com.bgrfacile.bgrsignapi.security.CustomUserDetails;
 import com.bgrfacile.bgrsignapi.model.Role;
 import com.bgrfacile.bgrsignapi.model.User;
 import com.bgrfacile.bgrsignapi.repository.RoleRepository;
 import com.bgrfacile.bgrsignapi.repository.UserRepository;
+import com.bgrfacile.bgrsignapi.security.CustomUserDetails;
 import com.bgrfacile.bgrsignapi.security.JwtTokenProvider;
 import com.bgrfacile.bgrsignapi.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,7 @@ import java.util.Collections;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Authentication Controller", description = "Gestion de l'authentification et inscription des utilisateurs.")
 public class AuthController {
 
     @Autowired
@@ -49,6 +52,7 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/login")
+    @Operation(summary = "Authentifier utilisateur", description = "Connexion de l'utilisateur et génération d'un JWT.")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         // Authentifier l'utilisateur
         Authentication authentication = authenticationManager.authenticate(
@@ -72,6 +76,7 @@ public class AuthController {
     }
 
     @GetMapping("/me")
+    @Operation(summary = "Obtenir le profil de l'utilisateur connecté.")
     public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal CustomUserDetails currentUser) {
         if (currentUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -85,6 +90,7 @@ public class AuthController {
 
 
     @PostMapping("/register")
+    @Operation(summary = "Enregistrer un nouvel utilisateur.")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
         // Vérifie si l'email existe déjà
         if (userRepository.existsByEmail(registerRequest.getEmail())) {

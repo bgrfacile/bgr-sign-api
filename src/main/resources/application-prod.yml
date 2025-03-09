@@ -30,7 +30,7 @@ spring:
 logging:
   level:
     root: warn
-    org.flywaydb: info
+    org.flywaydb: warn
 
 app:
 #  jwtSecret: ${JWT_SECRET}
@@ -41,3 +41,13 @@ debug: false
 
 server:
   port: 8080
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operations-sorter: method
+  show-actuator: true

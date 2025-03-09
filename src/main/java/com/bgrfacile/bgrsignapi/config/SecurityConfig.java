@@ -28,7 +28,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-
     @Autowired
     private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
@@ -43,25 +42,35 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(withDefaults())
-                .csrf(AbstractHttpConfigurer::disable)
+                .cors(withDefaults()) // Active la configuration CORS
+                .csrf(AbstractHttpConfigurer::disable) // Désactive CSRF (nécessaire pour les API stateless)
                 .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(customAuthenticationEntryPoint)
-                        .accessDeniedHandler(customAccessDeniedHandler)
+                        .authenticationEntryPoint(customAuthenticationEntryPoint) // Gestion des erreurs d'authentification
+                        .accessDeniedHandler(customAccessDeniedHandler) // Gestion des erreurs d'accès refusé
                 )
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // API stateless
                 )
                 .authorizeHttpRequests(authorize ->
                         authorize
-                                .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()  // Remplacez antMatchers par requestMatchers
-//                                .requestMatchers("/api/teacher/**").hasRole("teacher")
+                                // Autoriser l'accès à Swagger UI et aux endpoints publics
+                                .requestMatchers(
+                                        "/v3/api-docs/**",
+                                        "/swagger-ui/**",
+                                        "/swagger-ui.html",
+                                        "/api-docs.yaml",
+                                        "/api-docs.json",
+                                        "/api/auth/**"
+                                ).permitAll()
+                                // Restreindre l'accès aux endpoints protégés
                                 .requestMatchers("/api/teacher/**").hasAuthority("teacher")
                                 .requestMatchers("/api/admin/**").hasAuthority("admin")
-                                .anyRequest().authenticated()
+                                .anyRequest().authenticated() // Toutes les autres requêtes nécessitent une authentification
                 );
 
+        // Ajouter le filtre JWT avant le filtre d'authentification par défaut
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
@@ -73,19 +82,18 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(List.of("*")); // Autorise toutes les origines (à adapter pour la prod)
-        configuration.setAllowedOriginPatterns(List.of("*"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
+        configuration.setAllowedOriginPatterns(List.of("*")); // Autorise toutes les origines (à adapter pour la prod)
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Méthodes autorisées
+        configuration.setAllowedHeaders(List.of("*")); // En-têtes autorisés
+        configuration.setAllowCredentials(true); // Autoriser les credentials (cookies, etc.)
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/**", configuration); // Appliquer la configuration à tous les chemins
         return source;
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(); // Utiliser BCrypt pour le hachage des mots de passe
     }
 }

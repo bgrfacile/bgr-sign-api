@@ -25,14 +25,24 @@ spring:
 
 logging:
   level:
-    root: debug
-    org.flywaydb: info
+    root: warn
+    org.flywaydb: warn
 
 app:
   jwtSecret: ${JWT_SECRET:X7Ad9qh37bS1zP1zP1T09yZ3k8KYLS5fSE0tPNQ1It5Fz18JPycdkZxzOqPQZ1zH}
   jwtExpirationInMs: 604800000
 
-debug: true
+debug: false
 
 server:
   port: 8080
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operations-sorter: method
+  show-actuator: true
