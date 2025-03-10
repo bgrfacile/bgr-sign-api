@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class TeacherSessionDTO {
+    private Long courseId;
     private String time; // Format "9:00 AM"
     private String subjectName;
     private int presentCount;

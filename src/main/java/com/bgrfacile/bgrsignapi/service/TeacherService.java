@@ -36,6 +36,7 @@ public class TeacherService {
                             course.getId(), today, "present");
 
                     return TeacherSessionDTO.builder()
+                            .courseId(course.getId())
                             .time(formatTime(course.getSchedule()))
                             .subjectName(course.getSubject().getSubjectName())
                             .presentCount(present)
