@@ -1,6 +1,7 @@
 package com.bgrfacile.bgrsignapi.service;
 
-import com.bgrfacile.bgrsignapi.dto.request.CreateSessionRequest;
+import com.bgrfacile.bgrsignapi.dto.request.CreateCourseRequest;
+import com.bgrfacile.bgrsignapi.exception.ResourceNotFoundException;
 import com.bgrfacile.bgrsignapi.exception.SessionConflictException;
 import com.bgrfacile.bgrsignapi.model.Course;
 import com.bgrfacile.bgrsignapi.repository.CourseRepository;
@@ -10,8 +11,10 @@ import com.bgrfacile.bgrsignapi.repository.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-public class SessionService {
+public class CourseService {
     @Autowired
     private CourseRepository courseRepository;
 
@@ -24,7 +27,7 @@ public class SessionService {
     @Autowired
     private SchoolClassRepository schoolClassRepository;
 
-    public Course createSession(CreateSessionRequest request) {
+    public Course createSession(CreateCourseRequest request) {
         boolean sessionExists = courseRepository.existsByTeacherAndSubjectAndClassAndSchedule(
                 request.getTeacherId(),
                 request.getSubjectId(),
@@ -53,5 +56,30 @@ public class SessionService {
 
         // Sauvegarder la session
         return courseRepository.save(course);
+    }
+
+    public List<Course> getAllCourses() {
+        return courseRepository.findAll();
+    }
+
+    public Course getCourseById(Long id) {
+        return courseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Course not found"));
+    }
+
+    public Course createCourse(Course course) {
+        return courseRepository.save(course);
+    }
+
+    public Course updateCourse(Long id, Course courseDetails) {
+        Course course = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Course not found"));
+        course.setTeacher(courseDetails.getTeacher());
+        course.setSubject(courseDetails.getSubject());
+        course.setSchoolClass(courseDetails.getSchoolClass());
+        course.setSchedule(courseDetails.getSchedule());
+        return courseRepository.save(course);
+    }
+
+    public void deleteCourse(Long id) {
+        courseRepository.deleteById(id);
     }
 }

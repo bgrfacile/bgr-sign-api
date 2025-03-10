@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class CreateSessionRequest {
+public class CreateCourseRequest {
     @NotNull(message = "L'ID du professeur est requis")
     private Long teacherId;
 

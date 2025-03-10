@@ -1,10 +1,12 @@
 package com.bgrfacile.bgrsignapi.service;
 
 import com.bgrfacile.bgrsignapi.dto.UserProfileDTO;
+import com.bgrfacile.bgrsignapi.exception.ResourceNotFoundException;
 import com.bgrfacile.bgrsignapi.model.*;
 import com.bgrfacile.bgrsignapi.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,5 +51,29 @@ public class UserService {
                 .collect(Collectors.toSet()));
 
         return dto;
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
+    public User createUser(User user) {
+        return userRepository.save(user);
+    }
+
+    public User updateUser(Long id, User userDetails) {
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        user.setEmail(userDetails.getEmail());
+        user.setPassword(userDetails.getPassword());
+        user.setEnabled(userDetails.isEnabled());
+        return userRepository.save(user);
+    }
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
     }
 }

@@ -1,9 +1,9 @@
 package com.bgrfacile.bgrsignapi.controller;
 
-import com.bgrfacile.bgrsignapi.dto.request.CreateSessionRequest;
+import com.bgrfacile.bgrsignapi.dto.request.CreateCourseRequest;
 import com.bgrfacile.bgrsignapi.exception.SessionConflictException;
 import com.bgrfacile.bgrsignapi.model.Course;
-import com.bgrfacile.bgrsignapi.service.SessionService;
+import com.bgrfacile.bgrsignapi.service.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Admin Controller", description = "Gestion des sessions par l'administrateur")
 public class AdminController {
     @Autowired
-    private SessionService sessionService;
+    private CourseService courseService;
 
     @Operation(summary = "Créer une session", description = "Permet à l'administrateur de créer une nouvelle session.")
     @ApiResponses({
@@ -28,8 +28,8 @@ public class AdminController {
 
 
     @PostMapping("/sessions")
-    public ResponseEntity<Course> createSession(@RequestBody CreateSessionRequest request) {
-        Course course = sessionService.createSession(request);
+    public ResponseEntity<Course> createSession(@RequestBody CreateCourseRequest request) {
+        Course course = courseService.createSession(request);
         return ResponseEntity.ok(course);
     }
 
