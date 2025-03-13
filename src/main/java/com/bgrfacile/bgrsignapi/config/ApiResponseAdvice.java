@@ -2,6 +2,7 @@ package com.bgrfacile.bgrsignapi.config;
 
 import com.bgrfacile.bgrsignapi.dto.response.ErrorResponse;
 import com.bgrfacile.bgrsignapi.dto.response.SuccessResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -12,10 +13,22 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 @ControllerAdvice
 public class ApiResponseAdvice implements ResponseBodyAdvice<Object> {
+
+    private final ObjectMapper objectMapper;
+
+    public ApiResponseAdvice(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
     @Override
     public boolean supports(MethodParameter returnType,
                             Class<? extends HttpMessageConverter<?>> converterType) {
-        // affiner ici si besoin (exclure certains types, etc.)
+
+        // Exclure les endpoints de documentation OpenAPI
+        if (returnType.getContainingClass().getName().contains("org.springdoc") ||
+                returnType.getContainingClass().getName().contains("Resource")) {
+            return false;
+        }
         return true;
     }
 
@@ -30,6 +43,20 @@ public class ApiResponseAdvice implements ResponseBodyAdvice<Object> {
         if (body instanceof SuccessResponse || body instanceof ErrorResponse) {
             return body;
         }
-        return new SuccessResponse(body, "Opération réussie");
+
+        // Créer une réponse SuccessResponse
+        SuccessResponse successResponse = new SuccessResponse(body, "Opération réussie");
+
+
+        // Si le corps est une String, convertir SuccessResponse en JSON
+        if (body instanceof String) {
+            try {
+                return objectMapper.writeValueAsString(successResponse);
+            } catch (Exception e) {
+                throw new RuntimeException("Erreur lors de la conversion en JSON", e);
+            }
+        }
+
+        return successResponse;
     }
 }

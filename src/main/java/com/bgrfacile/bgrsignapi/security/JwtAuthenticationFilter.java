@@ -1,6 +1,5 @@
 package com.bgrfacile.bgrsignapi.security;
 
-import com.bgrfacile.bgrsignapi.model.CustomUserDetails;
 import com.bgrfacile.bgrsignapi.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -34,8 +33,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String jwt = getJwtFromRequest(request);
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-                Long userId = tokenProvider.getUserIdFromJWT(jwt);
-                CustomUserDetails userDetails = customUserDetailsService.loadUserById(userId);
+                String email = tokenProvider.getUsernameFromJWT(jwt);
+                CustomUserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
                 if (userDetails != null) {
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

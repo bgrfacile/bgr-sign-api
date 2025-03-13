@@ -23,6 +23,8 @@ public class User {
     @Column(name = "password")
     private String password;
 
+    private boolean enabled = true;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),

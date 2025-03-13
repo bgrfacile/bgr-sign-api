@@ -33,11 +33,20 @@ VALUES (1, 1),
        (4, 3);
 
 -- 4. Insérer des utilisateurs
-INSERT INTO users (email, password)
-VALUES ('admin@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2'),    -- password
-       ('teacher1@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2'), -- password
-       ('student1@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2'), -- password
-       ('parent1@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2');
+INSERT INTO users (email, password, enabled)
+VALUES ('admin@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2', true),    -- password
+       ('teacher1@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2',true), -- password
+       ('student1@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2',true), -- password
+       ('student2@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2',true), -- password
+       ('student3@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2',true), -- password
+       ('student4@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2',true), -- password
+       ('student5@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2',true), -- password
+       ('student6@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2',true), -- password
+       ('student7@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2',true), -- password
+       ('student8@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2',true), -- password
+       ('student9@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2',true), -- password
+       ('student10@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2',true), -- password
+       ('parent1@example.com', '$2a$10$rmzMv49gdIDI0EaPyGgLCucj1bmrpbFHzdgvSgMa0GTnInAwyHQQ2',true);
 -- password
 
 -- 5. Associer les utilisateurs à leurs rôles
@@ -60,13 +69,16 @@ INSERT INTO teachers (user_id, first_name, last_name, hire_date, specialization)
 VALUES (2, 'Bob', 'Teacher', '2020-09-01', 'Mathématiques');
 
 -- Table des classes
-INSERT INTO classes (class_name, academic_year)
+INSERT INTO school_classes (class_name, academic_year)
 VALUES ('Classe A', '2024-2025'),
        ('Classe B', '2024-2025');
 
 -- Table des étudiants (on associe l'étudiant à "Classe A", dont l'id sera 1)
 INSERT INTO students (user_id, first_name, last_name, date_of_birth, class_id)
-VALUES (3, 'Charlie', 'Student', '2005-04-15', 1);
+VALUES (3, 'Charlie', 'Student', '2005-04-15', 1),
+       (4,'Benji','student','2005-04-15',1),
+       (5,'Jack','student','2005-04-15',1),
+       (6,'Michel','student','2005-04-15',1);
 
 -- Table des parents
 INSERT INTO parents (user_id, first_name, last_name, phone_number)
@@ -80,14 +92,17 @@ VALUES (4, 3, 'parent');
 INSERT INTO subjects (subject_name, description)
 VALUES ('Mathématiques', 'Étude des nombres et des formes'),
        ('Histoire', 'Étude des événements passés'),
+       ('Physique', '---'),
+       ('Base de donnée', '---'),
        ('Sciences', 'Étude du monde naturel');
 
 -- 8. Insérer des cours
 -- Exemple : cours de Mathématiques pour la "Classe A" (id=1) donné par l'enseignant (user_id=2)
 INSERT INTO courses (teacher_id, subject_id, class_id, schedule)
-VALUES (2, 1, 1, '2024-09-01 09:00:00'),
+VALUES (2, 1, 1, now()),
        -- Un autre cours : Sciences pour la "Classe B" (id=2)
-       (2, 3, 2, '2024-09-01 11:00:00');
+       (2, 2, 1, now()),
+       (2, 3, 2, now());
 
 -- 9. Enregistrer des présences pour l'étudiant
 INSERT INTO attendances (student_id, course_id, date, status, recorded_by)

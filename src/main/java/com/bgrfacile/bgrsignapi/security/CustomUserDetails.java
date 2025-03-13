@@ -1,7 +1,7 @@
-package com.bgrfacile.bgrsignapi.model;
+package com.bgrfacile.bgrsignapi.security;
 
+import com.bgrfacile.bgrsignapi.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -23,26 +23,39 @@ public class CustomUserDetails implements UserDetails {
     private static final long serialVersionUID = 1L;
 
     private Long id;
-    private String username; // ici, le username correspond à l'email de l'utilisateur
+    private String username; // Correspond à l'email de l'utilisateur
 
     @JsonIgnore
     private String password;
 
+    private boolean enabled; // Ajout du champ enabled
+
     private Collection<? extends GrantedAuthority> authorities;
 
-    public CustomUserDetails(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities) {
+    public CustomUserDetails(Long id, String username, String password, boolean enabled, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.password = password;
+        this.enabled = enabled;
         this.authorities = authorities;
     }
 
     // Méthode statique pour créer une instance à partir d'un utilisateur
+//    public static CustomUserDetails create(User user) {
+//        List<GrantedAuthority> authorities = (user.getRoles() != null) ?
+//                user.getRoles().stream()
+//                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName().toUpperCase())) // Ajout du préfixe "ROLE_"
+//                        .collect(Collectors.toList())
+//                : List.of(); // Si pas de rôle, liste vide
+//
+//        return new CustomUserDetails(user.getId(), user.getEmail(), user.getPassword(), user.isEnabled(), authorities);
+//    }
+
     public static CustomUserDetails create(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toList());
-        return new CustomUserDetails(user.getId(), user.getEmail(), user.getPassword(), authorities);
+        return new CustomUserDetails(user.getId(), user.getEmail(), user.getPassword(), user.isEnabled(), authorities);
     }
 
     @Override
@@ -77,6 +90,6 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }
