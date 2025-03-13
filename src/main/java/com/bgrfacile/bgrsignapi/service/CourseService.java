@@ -4,6 +4,8 @@ import com.bgrfacile.bgrsignapi.dto.request.CreateCourseRequest;
 import com.bgrfacile.bgrsignapi.exception.ResourceNotFoundException;
 import com.bgrfacile.bgrsignapi.exception.SessionConflictException;
 import com.bgrfacile.bgrsignapi.model.Course;
+import com.bgrfacile.bgrsignapi.model.SchoolClass;
+import com.bgrfacile.bgrsignapi.model.Student;
 import com.bgrfacile.bgrsignapi.repository.CourseRepository;
 import com.bgrfacile.bgrsignapi.repository.SchoolClassRepository;
 import com.bgrfacile.bgrsignapi.repository.SubjectRepository;
@@ -82,4 +84,12 @@ public class CourseService {
     public void deleteCourse(Long id) {
         courseRepository.deleteById(id);
     }
+
+    public List<Student> getStudentsByCourseId(Long courseId) {
+        return courseRepository.findById(courseId)
+                .map(Course::getSchoolClass) // Récupérer la classe liée au cours
+                .map(SchoolClass::getStudents) // Récupérer les étudiants de cette classe
+                .orElseThrow(() -> new RuntimeException("Course not found"));
+    }
+
 }
