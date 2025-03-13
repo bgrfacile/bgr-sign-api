@@ -66,7 +66,7 @@ CREATE TABLE user_roles
 -- Rôle : Représenter les classes ou groupes d'étudiants dans l'établissement.
 -- Utilisation : Identifier l'appartenance des étudiants à une classe et gérer l'année académique correspondante.
 -------------------------------------------------------
-CREATE TABLE classes
+CREATE TABLE school_classes
 (
     id            SERIAL PRIMARY KEY,
     class_name    VARCHAR(50) UNIQUE NOT NULL,
@@ -122,8 +122,8 @@ CREATE TABLE students
     user_id       INT PRIMARY KEY REFERENCES users (id) ON DELETE CASCADE,
     first_name    VARCHAR(50),
     last_name     VARCHAR(50),
-    date_of_birth DATE,
-    class_id      INT REFERENCES classes (id) ON DELETE SET NULL
+    date_of_birth DATE null,
+    class_id      INT REFERENCES school_classes (id) ON DELETE SET NULL
 );
 
 -------------------------------------------------------
@@ -162,7 +162,7 @@ CREATE TABLE courses
     id         SERIAL PRIMARY KEY,
     teacher_id INT REFERENCES teachers (user_id) ON DELETE CASCADE,
     subject_id INT REFERENCES subjects (id) ON DELETE CASCADE,
-    class_id   INT REFERENCES classes (id) ON DELETE CASCADE,
+    class_id   INT REFERENCES school_classes (id) ON DELETE CASCADE,
     schedule   TIMESTAMP,
     UNIQUE (teacher_id, subject_id, class_id, schedule)
 );
